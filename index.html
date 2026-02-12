@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>❤️ 哈基蜂！你在干什么！！ ❤️</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            font-family: 'Microsoft YaHei', sans-serif;
+        }
+        #canvas {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            background: black; /* 背景图片覆盖此色 */
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+        /* 背景图片通过 JS 动态设置，以支持用户自定义路径 */
+        .content {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+        .question {
+            font-size: 2.2rem;
+            font-weight: bold;
+            margin-bottom: 50px;
+            text-align: center;
+            padding: 0 20px;
+        }
+        .btn-container {
+            display: flex;
+            gap: 30px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .btn {
+            border: none;
+            border-radius: 8px;
+            padding: 12px 30px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: white;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+            transition: all 0.2s;
+        }
+        .btn-no {
+            background: gray;
+        }
+        .btn-yes {
+            background: red;
+        }
+        .success-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 30px;
+        }
+        .success-img {
+            max-width: 90%;
+            max-height: 50vh;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(255,255,255,0.3);
+        }
+        .success-text {
+            font-size: 2rem;
+            font-weight: bold;
+            color: white;
+            text-align: center;
+            padding: 0 20px;
+        }
+        .fallback-heart {
+            font-size: 6rem;
+            color: red;
+        }
+        .hidden {
+            display: none !important;
+        }
+    </style>
+</head>
+<body>
+    <div id="canvas">
+        <div id="main-content" class="content">
+            <div class="question">哈基蜂别吃了，快松嘴！！！</div>
+            <div class="btn-container">
+                <button id="btn-no" class="btn btn-no">松嘴 😢</button>
+                <button id="btn-yes" class="btn btn-yes">不松 💖</button>
+            </div>
+        </div>
+
+        <div id="success-content" class="content hidden">
+            <div class="success-container">
+                <div id="success-image-container"></div>
+                <div id="success-text" class="success-text">我们被踹了！❤️</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ---------- 用户自定义配置（与 Python 代码对应）----------
+        const CONFIG = {
+            // 1. 背景图片 URL（请替换为您的图片在线地址，若留空则黑色背景）
+            BG_IMAGE_URL: "",  // 例如 "https://example.com/bg.jpg"
+            // 2. 表白成功后显示的图片 URL（留空则显示❤️）
+            SUCCESS_IMAGE_URL: "", // 例如 "https://example.com/success.jpg"
+            // 3. 表白成功文字
+            SUCCESS_TEXT: "我们被踹了！❤️"
+        };
+
+        // 设置背景图片
+        if (CONFIG.BG_IMAGE_URL) {
+            document.getElementById('canvas').style.backgroundImage = `url('${CONFIG.BG_IMAGE_URL}')`;
+        }
+
+        let yesFontSize = 1.2; // rem 单位
+
+        const btnNo = document.getElementById('btn-no');
+        const btnYes = document.getElementById('btn-yes');
+        const mainContent = document.getElementById('main-content');
+        const successContent = document.getElementById('success-content');
+
+        // 不愿意按钮：愿意按钮字体变大
+        btnNo.addEventListener('click', function() {
+            yesFontSize += 0.3;
+            btnYes.style.fontSize = yesFontSize + 'rem';
+        });
+
+        // 愿意按钮：切换成功界面
+        btnYes.addEventListener('click', function() {
+            mainContent.classList.add('hidden');
+            successContent.classList.remove('hidden');
+
+            // 处理成功图片
+            const imgContainer = document.getElementById('success-image-container');
+            imgContainer.innerHTML = ''; // 清空
+
+            if (CONFIG.SUCCESS_IMAGE_URL) {
+                const img = document.createElement('img');
+                img.src = CONFIG.SUCCESS_IMAGE_URL;
+                img.alt = 'success';
+                img.className = 'success-img';
+                img.onerror = function() {
+                    // 加载失败则显示大爱心
+                    this.style.display = 'none';
+                    const fallback = document.createElement('div');
+                    fallback.className = 'fallback-heart';
+                    fallback.textContent = '❤️';
+                    imgContainer.appendChild(fallback);
+                };
+                imgContainer.appendChild(img);
+            } else {
+                // 无图片配置，显示大爱心
+                const fallback = document.createElement('div');
+                fallback.className = 'fallback-heart';
+                fallback.textContent = '❤️';
+                imgContainer.appendChild(fallback);
+            }
+
+            // 设置自定义成功文字
+            document.getElementById('success-text').textContent = CONFIG.SUCCESS_TEXT;
+        });
+    </script>
+</body>
+</html>
